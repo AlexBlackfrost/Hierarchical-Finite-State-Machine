@@ -27,8 +27,15 @@ public abstract partial class StateObject {
         TryRegisterTransition(transition);
     }
 
-    private EventTransition TryCreateEventTransition(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(this, destinationStateObject, conditions);
+    public void AddTransition(StateObject destinationStateObject, Action transitionAction, params Func<bool>[] conditions) {
+        Transition transition = new Transition(this, destinationStateObject,transitionAction, conditions);
+        TryRegisterTransition(transition);
+    }
+
+    private EventTransition TryCreateEventTransition(StateObject destinationStateObject, 
+        Action transitionAction,params Func<bool>[] conditions) {
+
+        EventTransition transition = new EventTransition(this, destinationStateObject, transitionAction, conditions);
         TryRegisterTransition(transition);
         RegisterEventTransition(transition);
         return transition;
@@ -36,26 +43,53 @@ public abstract partial class StateObject {
 
     #region Add Event Transition Methods
     public Action AddEventTransition(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, null,conditions);
+        return transition.ListenEvent;
+    }
+    public Action AddEventTransition(StateObject destinationStateObject, 
+        Action transitionAction,params Func<bool>[] conditions) {
+
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T> AddEventTransition<T>(StateObject destinationStateObject, params Func<bool>[] conditions){
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2> AddTransition<T1, T2>(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
+    public Action<T> AddEventTransition<T>(StateObject destinationStateObject, 
+        Action transitionAction, params Func<bool>[] conditions) {
+
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        return transition.ListenEvent;
+    }
+    public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject,
+        params Func<bool>[] conditions) {
+
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2, T3> AddTransition<T1, T2, T3>(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
+    public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject, 
+        Action transitionAction, params Func<bool>[] conditions) {
+
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
-    
-    public Action<T1, T2, T3, T4> AddTransition<T1, T2, T3, T4>(StateObject destinationStateObject, params Func<bool>[] conditions) {
+
+    public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, params Func<bool>[] conditions) {
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
+        return transition.ListenEvent;
+    }
+
+    public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, 
+        Action transitionAction, params Func<bool>[] conditions) {
+        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        return transition.ListenEvent;
+    }
+
+    /*public Action<T1, T2, T3, T4> AddTransition<T1, T2, T3, T4>(StateObject destinationStateObject, params Func<bool>[] conditions) {
         EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
         return transition.ListenEvent;
     }
@@ -109,7 +143,7 @@ public abstract partial class StateObject {
     public Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> AddTransition<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(StateObject destinationStateObject, params Func<bool>[] conditions) {
         EventTransition transition = TryCreateEventTransition(destinationStateObject, conditions);
         return transition.ListenEvent;
-    }
+    }*/
     #endregion
 
     private void TryRegisterTransition(Transition transition) {

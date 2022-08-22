@@ -26,10 +26,15 @@ public abstract class StateMachine : StateObject  {
     private LinkedList<StateMachine> pathFromRoot;
     private bool initialized;
 
-
-    public StateMachine(params StateObject[] stateObjects) : base() {  
-        DefaultStateObject = stateObjects[0];
+    public StateMachine(params StateObject[] stateObjects) : base() { 
+        if(stateObjects.Length == 0) {
+            throw new StatelessStateMachineException(
+                "A State Machine must have at least one state object." +
+                " State machine of type '" + GetType() + "' does not have any state objects."
+            );
+        }
         initialized = false; 
+        DefaultStateObject = stateObjects[0];
         foreach (StateObject stateObject in stateObjects) {
             stateObject.StateMachine = this;
         }
@@ -55,7 +60,9 @@ public abstract class StateMachine : StateObject  {
         CurrentStateObject.ConsumeTransitionsEvents();
 
         if (availableTransition != null) {
-            ChangeState(availableTransition.TargetStateObject);
+            ChangeState(availableTransition.OriginStateObject,
+                        availableTransition.TargetStateObject, 
+                        availableTransition.TransitionAction);
             changedState = true;
         }
         return changedState;
@@ -84,18 +91,23 @@ public abstract class StateMachine : StateObject  {
         return availableTransition;
     }
 
-    private void ChangeState(StateObject stateObject) {
-        StateMachine lowestCommonStateMachine = FindLowestCommonStateMachine(this, stateObject.StateMachine);
+    private void ChangeState(StateObject originStateObject, StateObject targetStateObject, 
+        Action transitionAction) {
+
+        StateMachine lowestCommonStateMachine = FindLowestCommonStateMachine(
+            originStateObject.StateMachine, targetStateObject.StateMachine);
 
         lowestCommonStateMachine.CurrentStateObject.Exit();
 
-        stateObject.StateMachine.CurrentStateObject = stateObject;
-        StateMachine currentStateMachine = stateObject.StateMachine;
+        targetStateObject.StateMachine.CurrentStateObject = targetStateObject;
+        StateMachine currentStateMachine = targetStateObject.StateMachine;
         while (currentStateMachine != null && !currentStateMachine.Equals(lowestCommonStateMachine)) {
             StateMachine parentStateMachine = currentStateMachine.StateMachine;
             parentStateMachine.CurrentStateObject = currentStateMachine;
             currentStateMachine = parentStateMachine;
         }
+
+        transitionAction?.Invoke();
 
         lowestCommonStateMachine.CurrentStateObject.Enter();
     }
@@ -104,6 +116,7 @@ public abstract class StateMachine : StateObject  {
         CheckInitialization();
         bool changedState = TryChangeState();
         if (!changedState) {
+            OnUpdate();
             CurrentStateObject.UpdateInternal();
         }
     }
@@ -115,14 +128,14 @@ public abstract class StateMachine : StateObject  {
 
     public sealed override void FixedUpdate() {
         CheckInitialization();
-        CurrentStateObject.FixedUpdate();
         OnFixedUpdate();
+        CurrentStateObject.FixedUpdate();
     }
 
     public sealed override void LateUpdate() {
         CheckInitialization();
-        CurrentStateObject.LateUpdate();
         OnLateUpdate();
+        CurrentStateObject.LateUpdate();
     }
 
     internal sealed override void Enter() {

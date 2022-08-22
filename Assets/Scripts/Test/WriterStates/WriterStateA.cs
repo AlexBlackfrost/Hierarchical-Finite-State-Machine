@@ -13,7 +13,12 @@ public class WriterStateA : State {
     protected override void OnUpdate() {
         stringBuilder.Append(GetType() + " Update");
     }
-
+    protected override void OnFixedUpdate() {
+        stringBuilder.Append(GetType() + " FixedUpdate");
+    }
+    protected override void OnLateUpdate() {
+        stringBuilder.Append(GetType() + " LateUpdate");
+    }
     protected override void OnEnter() {
         stringBuilder.Append(GetType() + " Enter");
     }

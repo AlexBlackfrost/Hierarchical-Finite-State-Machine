@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AState : State {
-    
+public class StateC : State {
+
+    public StateC() : base() {
+
+    }
 }
 
