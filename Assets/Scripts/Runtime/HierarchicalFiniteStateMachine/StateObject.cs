@@ -6,12 +6,12 @@ using UnityEngine;
 public abstract partial class StateObject {
     internal StateMachine StateMachine { get; set; }
 
-    private protected Dictionary<Type, Transition> transitions;
-    private protected Dictionary<Type, EventTransition> eventTransitions;
+    private protected List<Transition> transitions;
+    private protected List<EventTransition> eventTransitions;
 
     public StateObject() {
-        transitions = new Dictionary<Type, Transition>();
-        eventTransitions = new Dictionary<Type, EventTransition>();
+        transitions = new List<Transition>();
+        eventTransitions = new List< EventTransition>();
     }
 
     public bool Equals(StateObject otherStateObject) {
@@ -32,60 +32,51 @@ public abstract partial class StateObject {
         TryRegisterTransition(transition);
     }
 
-    private EventTransition TryCreateEventTransition(StateObject destinationStateObject, 
-        Action transitionAction,params Func<bool>[] conditions) {
-
-        EventTransition transition = new EventTransition(this, destinationStateObject, transitionAction, conditions);
-        TryRegisterTransition(transition);
-        RegisterEventTransition(transition);
-        return transition;
-    }
-
     #region Add Event Transition Methods
     public Action AddEventTransition(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, null,conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, null,conditions);
         return transition.ListenEvent;
     }
     public Action AddEventTransition(StateObject destinationStateObject, 
         Action transitionAction,params Func<bool>[] conditions) {
 
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T> AddEventTransition<T>(StateObject destinationStateObject, params Func<bool>[] conditions){
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, null, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T> AddEventTransition<T>(StateObject destinationStateObject, 
         Action transitionAction, params Func<bool>[] conditions) {
 
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
     public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject,
         params Func<bool>[] conditions) {
 
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, null, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject, 
         Action transitionAction, params Func<bool>[] conditions) {
 
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, null, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, null, conditions);
         return transition.ListenEvent;
     }
 
     public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, 
         Action transitionAction, params Func<bool>[] conditions) {
-        EventTransition transition = TryCreateEventTransition(destinationStateObject, transitionAction, conditions);
+        EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction, conditions);
         return transition.ListenEvent;
     }
 
@@ -146,15 +137,7 @@ public abstract partial class StateObject {
     }*/
     #endregion
 
-    private void TryRegisterTransition(Transition transition) {
-        if (transitions.ContainsKey(transition.TargetStateObject.GetType())) {
-            throw new DuplicatedTransitionException(
-                "State object " + transition.OriginStateObject.GetType() + 
-                " already has a transition to state object "
-                + transition.OriginStateObject.GetType()
-            );
-        }
-
+    private protected void TryRegisterTransition(Transition transition) {
         if(!HaveCommonStateMachineAncestor(transition.OriginStateObject, transition.TargetStateObject)) {
             throw new NoCommonParentStateMachineException(
                 "State objects " + transition.OriginStateObject.GetType() +
@@ -163,11 +146,16 @@ public abstract partial class StateObject {
             );
         }
 
-        transitions[transition.TargetStateObject.GetType()] = transition;
+        transitions.Add(transition);
     }
 
-    private void RegisterEventTransition(EventTransition transition) {
-        eventTransitions[transition.TargetStateObject.GetType()] = transition;
+    private EventTransition TryRegisterEventTransition(StateObject destinationStateObject,
+        Action transitionAction, params Func<bool>[] conditions) {
+
+        EventTransition transition = new EventTransition(this, destinationStateObject, transitionAction, conditions);
+        TryRegisterTransition(transition);
+        eventTransitions.Add(transition);
+        return transition;
     }
 
     private bool HaveCommonStateMachineAncestor(StateObject stateObject1, StateObject stateObject2) {
@@ -182,6 +170,7 @@ public abstract partial class StateObject {
 
         return haveCommonStateMachineAncestor;
     }
+
 
     /* <summary>
      * Lowest Common Ancestor tree algorithm

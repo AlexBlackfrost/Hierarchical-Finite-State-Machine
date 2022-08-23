@@ -8,14 +8,14 @@ public abstract class State : StateObject {
     public State() : base() { }
 
     internal sealed override void ConsumeTransitionsEvents() {
-        foreach (EventTransition eventTransition in eventTransitions.Values) {
+        foreach (EventTransition eventTransition in eventTransitions) {
             eventTransition.ConsumeEvent();
         }
     }
 
     internal sealed override Transition GetAvailableTransition() {
         Transition availableTransition = null;
-        foreach (Transition transition in transitions.Values) {
+        foreach (Transition transition in transitions) {
             if (transition.AllConditionsMet()) {
                 availableTransition = transition;
                 break;

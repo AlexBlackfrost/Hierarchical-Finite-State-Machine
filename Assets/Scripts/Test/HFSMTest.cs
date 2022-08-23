@@ -261,27 +261,6 @@ public class HFSMTest {
     }
 
     [Test]
-    public void DuplicatedTransition() {
-        StringBuilder stringBuilder = new StringBuilder();
-        State StateA = new WriterStateA(stringBuilder);
-        State StateB = new WriterStateB(stringBuilder);
-        StateMachine zeroStateMachine = new WriterStateMachineZero(stringBuilder, StateA, StateB);
-
-        bool doTransitionAB = false;
-        StateA.AddTransition(StateB, () => { return doTransitionAB; });
-
-        Assert.Throws<DuplicatedTransitionException>(
-            delegate {
-                StateA.AddTransition(StateB,
-                    () => {
-                        return doTransitionAB;
-                    }
-                );
-            }
-        );
-    }
-
-    [Test]
     public void LCAStateWithoutStateMachine() {
         StringBuilder stringBuilder = new StringBuilder();
         State StateA = new WriterStateA(stringBuilder);
