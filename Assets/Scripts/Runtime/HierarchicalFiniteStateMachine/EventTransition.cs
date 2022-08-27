@@ -14,7 +14,9 @@ internal class EventTransition : Transition {
     }
 
     private void EventLogic() {
-        if (OriginStateObject.StateMachine?.CurrentStateObject == OriginStateObject) {
+        if(OriginStateObject.IsActive || 
+           (OriginStateObject.GetType() == typeof(State.Any) && OriginStateObject.StateMachine.IsActive)) {
+
             eventListened = true;
         }
     }

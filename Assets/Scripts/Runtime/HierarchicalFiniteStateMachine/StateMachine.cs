@@ -27,6 +27,7 @@ public abstract class StateMachine : StateObject  {
     private List<Transition> anyTransitions;
     private List<EventTransition> anyEventTransitions;
     private bool initialized;
+    private State anyState;
 
     public StateMachine(params StateObject[] stateObjects) : base() { 
         if(stateObjects.Length == 0) {
@@ -37,7 +38,10 @@ public abstract class StateMachine : StateObject  {
         }
         anyTransitions = new List<Transition>();
         anyEventTransitions = new List<EventTransition>();
-        initialized = false; 
+        anyState = new State.Any();
+        anyState.StateMachine = this;
+        initialized = false;
+
         DefaultStateObject = stateObjects[0];
         foreach (StateObject stateObject in stateObjects) {
             stateObject.StateMachine = this;
@@ -60,117 +64,96 @@ public abstract class StateMachine : StateObject  {
 
     #region AddAnyTransition methods
     public void AddAnyTransition(StateObject targetStateObject, params Func<bool>[] conditions) {
-        Transition transition = new Transition(null, targetStateObject, null, conditions);
-        if(FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-        }
+        Transition transition = new Transition(anyState, targetStateObject, null, conditions);
+        TryRegisterAnyTransition(transition);
+        
     }
 
     public void AddAnyTransition(StateObject targetStateObject, Action transitionAction,
         params Func<bool>[] conditions) {
-        Transition transition = new Transition(null, targetStateObject, transitionAction, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-        }
+        Transition transition = new Transition(anyState, targetStateObject, transitionAction, conditions);
+        TryRegisterAnyTransition(transition);
     }
 
-    public Action<T> AddAnyTransition<T>(StateObject targetStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(null, targetStateObject, null, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
-        }
+    public Action AddAnyEventTransition(StateObject targetStateObject, params Func<bool>[] conditions) {
+        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T> AddAnyTransition<T>(StateObject targetStateObject, Action transitionAction, 
+    public Action AddAnyEventTransition(StateObject targetStateObject, Action transitionAction, params Func<bool>[] conditions) {
+        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
+        return transition.ListenEvent;
+    }
+
+    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, params Func<bool>[] conditions) {
+        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
+        return transition.ListenEvent;
+    }
+
+    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, Action transitionAction, 
         params Func<bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(null, targetStateObject, transitionAction, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
-        }
+        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2> AddAnyTransition<T1, T2>(StateObject targetStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(null, targetStateObject, null, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
-        }
+    public Action<T1, T2> AddAnyEventTransition<T1, T2>(StateObject targetStateObject, params Func<bool>[] conditions) {
+
+        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2> AddAnyTransition<T1, T2>(StateObject targetStateObject, 
-        Action transitionAction, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(null, targetStateObject, transitionAction, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
-        }
-        return transition.ListenEvent;
-    }
-
-    public Action<T1, T2, T3> AddAnyTransition<T1, T2, T3>(StateObject targetStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(null, targetStateObject, null, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
-            throw new NoCommonParentStateMachineException(
-                "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
-            );
-        } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
-        }
-        return transition.ListenEvent;
-    }
-
-    public Action<T1, T2, T3> AddAnyTransition<T1, T2, T3>(StateObject targetStateObject, 
+    public Action<T1, T2> AddAnyEventTransition<T1, T2>(StateObject targetStateObject, 
         Action transitionAction, params Func<bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(null, targetStateObject, transitionAction, conditions);
-        if (FindLowestCommonStateMachine(this, targetStateObject.StateMachine) == null) {
+        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
+        return transition.ListenEvent;
+    }
+
+    public Action<T1, T2, T3> AddAnyEventTransition<T1, T2, T3>(StateObject targetStateObject, params Func<bool>[] conditions) {
+        
+        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
+        return transition.ListenEvent;
+    }
+
+    public Action<T1, T2, T3> AddAnyEventTransition<T1, T2, T3>(StateObject targetStateObject, 
+        Action transitionAction, params Func<bool>[] conditions) {
+
+        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        TryRegisterAnyTransition(transition);
+        anyEventTransitions.Add(transition);
+        return transition.ListenEvent;
+    }
+
+    private void TryRegisterAnyTransition(Transition anyTransition) {
+        if (!HaveCommonStateMachineAncestor(anyTransition.OriginStateObject, 
+            anyTransition.TargetStateObject)) {
+
             throw new NoCommonParentStateMachineException(
                 "States inside state machine of type " + this.GetType() + " and state object of " +
-                "type " + targetStateObject.GetType() + " don't have a common parent state machine."
+                "type " + anyTransition.TargetStateObject.GetType() + " don't have a common " +
+                "parent state machine."
             );
         } else {
-            anyTransitions.Add(transition);
-            anyEventTransitions.Add(transition);
+            anyTransitions.Add(anyTransition);
         }
-        return transition.ListenEvent;
     }
 #endregion
 
@@ -228,7 +211,6 @@ public abstract class StateMachine : StateObject  {
             }
         }
         
-
         // Check any state object's transitions
         foreach (Transition anyTransition in anyTransitions) {
             if (anyTransition.AllConditionsMet()) {
@@ -248,8 +230,12 @@ public abstract class StateMachine : StateObject  {
     private void ChangeState(StateObject originStateObject, StateObject targetStateObject, 
         Action transitionAction) {
 
+        StateMachine stateMachine1 = originStateObject.StateMachine;
+        StateMachine stateMachine2 = targetStateObject.StateMachine;
+
         StateMachine lowestCommonStateMachine = FindLowestCommonStateMachine(
-            originStateObject.StateMachine, targetStateObject.StateMachine);
+            stateMachine1, stateMachine2
+        );
 
         lowestCommonStateMachine.CurrentStateObject.Exit();
 
@@ -262,7 +248,6 @@ public abstract class StateMachine : StateObject  {
         }
 
         transitionAction?.Invoke();
-
         lowestCommonStateMachine.CurrentStateObject.Enter();
     }
 
@@ -293,6 +278,7 @@ public abstract class StateMachine : StateObject  {
     }
 
     internal sealed override void Enter() {
+        IsActive = true;
         if(CurrentStateObject == null) {
             CurrentStateObject = DefaultStateObject;
         } 
@@ -304,11 +290,11 @@ public abstract class StateMachine : StateObject  {
     internal sealed override void Exit() {
         CurrentStateObject.Exit();
         OnExit();
+        IsActive = false;
         CurrentStateObject = null;
     }
 
     public sealed override string GetCurrentStateName() {
         return GetType().ToString() + "." + CurrentStateObject.GetCurrentStateName();
     }
- 
 }

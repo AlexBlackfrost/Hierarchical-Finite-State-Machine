@@ -1251,4 +1251,597 @@ public class HFSMTest {
 
         Assert.AreEqual(expected, sb.ToString());
     }
+
+    [Test]
+    public void AnyTransition() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        bool transitionCondition = false;
+        Action transitionAction = () => { sb.Append(transitionText); };
+        stateMachineOne.AddAnyTransition(stateB, transitionAction, () => { return transitionCondition; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionCondition = true;
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         transitionText +
+                         stateMachineTwo.GetType() + Enter +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyTransitionPriority() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+        State stateD = new WriterStateD(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC, stateD);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        bool transitionCondition = false;
+        stateMachineOne.AddAnyTransition(stateC, () => { return transitionCondition; });
+
+        bool transitionConditionBD = false;
+        stateB.AddTransition(stateD, () => { return transitionConditionBD; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionCondition = true;
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         stateMachineTwo.GetType() + Enter +
+                         stateC.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateC.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyTransitionPriorityThreeLevels() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+        State stateD = new WriterStateD(sb);
+
+        StateMachine stateMachineThree = new WriterStateMachineTwo(sb, stateC, stateD);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateMachineThree);
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        bool transitionConditionOneTwo = false;
+        stateMachineOne.AddTransition(stateMachineTwo, () => { return transitionConditionOneTwo; });
+
+        bool transitionConditionCD = false;
+        stateMachineTwo.AddAnyTransition(stateD, () => { return transitionConditionCD; });
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionCD = true;
+        transitionConditionOneTwo = true;
+        stateMachineZero.Update();
+        transitionConditionCD = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         stateMachineTwo.GetType() + Enter +
+                         stateMachineThree.GetType() + Enter +
+                         stateC.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateMachineThree.GetType() + Update +
+                         stateC.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void EventTransitionConsumed() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+        State stateD = new WriterStateD(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC, stateD);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        bool transitionConditionOneC = false;
+        stateMachineOne.AddAnyTransition(stateC, () => { return transitionConditionOneC; });
+
+        bool transitionConditionCD = false;
+        Action transitionEvent = null;
+        transitionEvent += stateC.AddEventTransition(stateD, () => { return transitionConditionCD; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionOneC = true;
+        transitionConditionCD = true;
+        transitionEvent.Invoke();
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         stateMachineTwo.GetType() + Enter +
+                         stateC.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateC.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void NoCommonParentStateMachineAnyTransition() {
+        StringBuilder stringBuilder = new StringBuilder();
+        State StateA = new WriterStateA(stringBuilder);
+        State StateB = new WriterStateB(stringBuilder);
+        StateMachine zeroStateMachine = new WriterStateMachineZero(stringBuilder, StateA, StateB);
+        zeroStateMachine.DefaultStateObject = StateA;
+
+        State CState = new WriterStateC(stringBuilder);
+
+        bool doTransitionAC = false;
+        Assert.Throws<NoCommonParentStateMachineException>(
+            delegate {
+                zeroStateMachine.AddAnyTransition(CState,
+                    () => {
+                        return doTransitionAC;
+                    }
+                );
+            }
+        );
+    }
+
+    [Test]
+    public void AnyEventTransitionZeroParam() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action transitionEvent = null;
+        transitionEvent += stateMachineOne.AddAnyEventTransition(stateB, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke();
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionZeroParamWithTransitionAction() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action transitionEvent = null;
+        Action transitionAction = () => { sb.Append(transitionText); };
+        transitionEvent += stateMachineOne.AddAnyEventTransition(stateB, transitionAction, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke();
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         transitionText +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+
+    [Test]
+    public void AnyEventTransitionOneParam() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int> transitionEvent = null;
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1);
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionOneParamWithTransitionAction() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int> transitionEvent = null;
+        Action transitionAction = () => { sb.Append(transitionText); };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, transitionAction, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1);
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         transitionText +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionTwoParams() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int, string> transitionEvent = null;
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1, "yay");
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionTwoParamsWithTransitionAction() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int, string> transitionEvent = null;
+        Action transitionAction = () => { sb.Append(transitionText); };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, transitionAction, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1, "yay");
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         transitionText +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionThreeParams() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int, string, bool> transitionEvent = null;
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1, "yay", false);
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionThreeParamsWithTransitionAction() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
+
+        bool transitionConditionAB = false;
+        Action<int, string, bool> transitionEvent = null;
+        Action transitionAction = () => { sb.Append(transitionText); };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, transitionAction, () => { return transitionConditionAB; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionAB = true;
+        transitionEvent.Invoke(1, "yay", false);
+        stateMachineZero.Update();
+        transitionConditionAB = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         transitionText +
+                         stateB.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateB.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void AnyEventTransitionRootStateMachine() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineOne(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        bool transitionConditionC = false;
+        Action transitionEvent = null;
+        transitionEvent += stateMachineZero.AddAnyEventTransition(stateC, () => { return transitionConditionC; });
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        transitionConditionC = true;
+        transitionEvent.Invoke();
+        stateMachineZero.Update();
+        transitionConditionC = false;
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         stateMachineTwo.GetType() + Enter +
+                         stateC.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateC.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
 }

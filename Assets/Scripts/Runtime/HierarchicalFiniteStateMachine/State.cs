@@ -42,14 +42,18 @@ public abstract class State : StateObject {
     }
 
     internal sealed override void Enter() {
+        IsActive = true;
         OnEnter();
     }
 
     internal sealed override void Exit() {
+        IsActive = false;
         OnExit();
     }
 
     public sealed override string GetCurrentStateName() { 
         return GetType().ToString(); 
     }
+
+    internal class Any : State { }
 }

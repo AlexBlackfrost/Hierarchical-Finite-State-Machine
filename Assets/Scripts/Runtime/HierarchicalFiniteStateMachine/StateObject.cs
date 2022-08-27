@@ -5,13 +5,14 @@ using UnityEngine;
 
 public abstract partial class StateObject {
     internal StateMachine StateMachine { get; set; }
-
+    internal bool IsActive { get; private protected set; }
     private protected List<Transition> transitions;
     private protected List<EventTransition> eventTransitions;
 
     public StateObject() {
         transitions = new List<Transition>();
         eventTransitions = new List< EventTransition>();
+        IsActive = false;
     }
 
     public bool Equals(StateObject otherStateObject) {
@@ -158,7 +159,7 @@ public abstract partial class StateObject {
         return transition;
     }
 
-    private bool HaveCommonStateMachineAncestor(StateObject stateObject1, StateObject stateObject2) {
+    private protected bool HaveCommonStateMachineAncestor(StateObject stateObject1, StateObject stateObject2) {
         bool haveCommonStateMachineAncestor = false;
         StateMachine stateMachine1 = stateObject1.StateMachine;
         StateMachine stateMachine2 = stateObject2.StateMachine;
