@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class StateMachine : StateObject  {
+
+namespace HFSM {
+    public abstract class StateMachine : StateObject  {
     public StateObject DefaultStateObject { get; set; } 
     public StateObject CurrentStateObject { get; private set; }
     internal LinkedList<StateMachine> PathFromRoot {
@@ -295,6 +297,13 @@ public abstract class StateMachine : StateObject  {
     }
 
     public sealed override string GetCurrentStateName() {
-        return GetType().ToString() + "." + CurrentStateObject.GetCurrentStateName();
+        string name = GetType().ToString() + ".";
+        if (CurrentStateObject == null) {
+            name += "None";
+        } else {
+            name += CurrentStateObject.GetCurrentStateName();
+        }
+        return name;
     }
+}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using HFSM;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -14,6 +15,30 @@ public class HFSMTest {
     internal static string FixedUpdate = " FixedUpdate";
     internal static string LateUpdate = " LateUpdate";
     internal static string transitionText = "TransitionAction";
+
+    [Test]
+    public void StateName() {
+        State stateA = new StateA();
+        State stateB = new StateB();
+        StateMachine stateMachineOne = new StateMachineOne(stateA);
+        StateMachine stateMachineTwo = new StateMachineTwo(stateB);
+        StateMachine stateMachineZero = new StateMachineZero(stateMachineOne, stateMachineTwo);
+
+        stateMachineZero.Init();
+        Assert.AreEqual("StateMachineZero.StateMachineOne.StateA", stateMachineZero.GetCurrentStateName());
+    }
+
+    [Test]
+    public void StateNameNone() {
+        State stateA = new StateA();
+        State stateB = new StateB();
+        StateMachine stateMachineOne = new StateMachineOne(stateA);
+        StateMachine stateMachineTwo = new StateMachineTwo(stateB);
+        StateMachine stateMachineZero = new StateMachineZero(stateMachineOne, stateMachineTwo);
+
+        stateMachineZero.Init();
+        Assert.AreEqual("StateMachineTwo.None", stateMachineTwo.GetCurrentStateName());
+    }
 
     [Test]
     public void ZeroOneA() {

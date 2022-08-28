@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class State : StateObject {
+
+namespace HFSM {
+    public abstract class State : StateObject {
 
     public State() : base() { }
 
@@ -56,4 +58,5 @@ public abstract class State : StateObject {
     }
 
     internal class Any : State { }
+}
 }

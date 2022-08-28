@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-internal class Transition {
+namespace HFSM {
+    internal class Transition {
     internal StateObject OriginStateObject { get; private set; }
     internal StateObject TargetStateObject { get; private set; }
     internal Action TransitionAction { get; private set; }
@@ -12,12 +13,6 @@ internal class Transition {
     private Func<bool>[] conditions;
         
     
-
-    public Transition(StateObject originSateObject, StateObject targetStateObject, params Func<bool>[] conditions) {
-        OriginStateObject = originSateObject;
-        TargetStateObject = targetStateObject;
-        this.conditions = conditions;
-    }
     public Transition(StateObject originSateObject, StateObject targetStateObject, Action transitionAction,
          params Func<bool>[] conditions) {
 
@@ -37,3 +32,4 @@ internal class Transition {
     }
 }
 
+}

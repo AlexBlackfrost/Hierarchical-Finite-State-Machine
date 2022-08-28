@@ -1,6 +1,7 @@
 using System;
 
-public class RootStateMachineNotInitializedException : Exception {
-    public RootStateMachineNotInitializedException(string message) : base(message) { }
+namespace HFSM {
+    public class RootStateMachineNotInitializedException : Exception {
+        public RootStateMachineNotInitializedException(string message) : base(message) { }
+    }
 }
-
