@@ -1,0 +1,17 @@
+{
+  "name": "com.blackfrost.hfsm",
+  "version": "1.0.0",
+  "displayName": "Hierarchical Finite State Machine",
+  "description": "Hierarchical finite state machine implementation",
+  "documentationUrl": "",
+  "license": "MIT",
+  "keywords": ["hfsm", "state machine"],
+  "author": {
+    "name": "Alex Blackfrost",
+    "url": "https://github.com/alexblackfrost"
+  },
+  "samples": {
+      "displayName": "Fauna simulation",
+      "path": "Samples~/FaunaSimulation"
+   }
+}

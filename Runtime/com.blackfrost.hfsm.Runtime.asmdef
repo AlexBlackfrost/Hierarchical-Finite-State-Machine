@@ -1,0 +1,17 @@
+{
+    "name": "com.blackfrost.hfsm.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:18b69389003285c40b70fbc53cf7815c",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
