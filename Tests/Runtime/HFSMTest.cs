@@ -779,7 +779,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action<int> transitionAction = (int arg) => { sb.Append(transitionText); };
         Action<int> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int>(stateB, transitionAction);
 
@@ -862,7 +862,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(transitionText); };
         Action<int, string> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int, string>(stateB, transitionAction);
 
@@ -945,7 +945,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action<int, string, int> transitionAction = (int arg1, string arg2, int arg3) => { sb.Append(transitionText); };
         Action<int, string, int> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int, string, int>(stateB, transitionAction);
 
@@ -1585,7 +1585,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int> transitionEvent = null;
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, () => { return transitionConditionAB; });
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, (int arg1) => { return transitionConditionAB; });
 
 
         stateMachineZero.Init();
@@ -1626,8 +1626,8 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int> transitionEvent = null;
-        Action transitionAction = () => { sb.Append(transitionText); };
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, transitionAction, () => { return transitionConditionAB; });
+        Action<int> transitionAction = (int arg) => { sb.Append(transitionText); };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, transitionAction, (int arg1) => { return transitionConditionAB; });
 
 
         stateMachineZero.Init();
@@ -1669,7 +1669,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string> transitionEvent = null;
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, () => { return transitionConditionAB; });
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, (int arg1, string arg2) => { return transitionConditionAB; });
 
 
         stateMachineZero.Init();
@@ -1710,8 +1710,9 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string> transitionEvent = null;
-        Action transitionAction = () => { sb.Append(transitionText); };
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, transitionAction, () => { return transitionConditionAB; });
+        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(transitionText); };
+        Func<int, string, bool> transitionCondition = (int arg1, string arg2) => { return transitionConditionAB; };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, transitionAction, transitionCondition);
 
 
         stateMachineZero.Init();
@@ -1753,7 +1754,8 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string, bool> transitionEvent = null;
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, () => { return transitionConditionAB; });
+        Func<int, string, bool, bool> transitionCondition = (int arg1, string arg2, bool arg3) => { return transitionConditionAB; };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, transitionCondition);
 
 
         stateMachineZero.Init();
@@ -1794,8 +1796,9 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string, bool> transitionEvent = null;
-        Action transitionAction = () => { sb.Append(transitionText); };
-        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, transitionAction, () => { return transitionConditionAB; });
+        Action<int, string, bool> transitionAction = (int arg1, string arg2, bool arg3) => { sb.Append(transitionText); };
+        Func<int, string, bool, bool> transitionCondition = (int arg1, string arg2, bool arg3) => { return transitionConditionAB; };
+        transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, transitionAction, transitionCondition );
 
 
         stateMachineZero.Init();
@@ -1834,7 +1837,7 @@ public class HFSMTest {
         State stateC = new WriterStateC(sb);
 
         StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
-        StateMachine stateMachineTwo = new WriterStateMachineOne(sb, stateC);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
         bool transitionConditionC = false;
@@ -1868,5 +1871,55 @@ public class HFSMTest {
                          stateC.GetType() + Update;
 
         Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void TransitionEventActionWithEventParam() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+
+        Action<int[]> transitionEvent = null;
+        int[] number = { 48 };
+        Action<int[]> transitionAction = (int[] number) => { 
+            number[0]++; 
+        };
+        Func<int[], bool> transitionCondition = (int[] numberArg) => { return numberArg[0] == 49; };
+        transitionEvent += stateA.AddEventTransition<int[]>(stateC, transitionAction, transitionCondition);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        number[0] = 49;
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + Enter +
+                         stateMachineOne.GetType() + Enter +
+                         stateA.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineOne.GetType() + Update +
+                         stateA.GetType() + Update +
+
+                         stateA.GetType() + Exit +
+                         stateMachineOne.GetType() + Exit +
+                         stateMachineTwo.GetType() + Enter +
+                         stateC.GetType() + Enter +
+
+                         stateMachineZero.GetType() + Update +
+                         stateMachineTwo.GetType() + Update +
+                         stateC.GetType() + Update;
+
+        Assert.AreEqual(expected, sb.ToString());
+        Assert.AreEqual(50, number[0]); 
     }
 }

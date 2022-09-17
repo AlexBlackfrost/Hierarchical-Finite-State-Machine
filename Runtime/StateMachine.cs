@@ -27,7 +27,7 @@ namespace HFSM {
 
     private LinkedList<StateMachine> pathFromRoot;
     private List<Transition> anyTransitions;
-    private List<EventTransition> anyEventTransitions;
+    private List<EventTransitionBase> anyEventTransitions;
     private bool initialized;
     private State anyState;
 
@@ -39,7 +39,7 @@ namespace HFSM {
             );
         }
         anyTransitions = new List<Transition>();
-        anyEventTransitions = new List<EventTransition>();
+        anyEventTransitions = new List<EventTransitionBase>();
         anyState = new State.Any();
         anyState.StateMachine = this;
         initialized = false;
@@ -93,52 +93,52 @@ namespace HFSM {
         return transition.ListenEvent;
     }
 
-    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, params Func<bool>[] conditions) {
-        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, params Func<T, bool>[] conditions) {
+        EventTransition<T> transition = new EventTransition<T>(anyState, targetStateObject, null, conditions);
 
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, Action transitionAction, 
-        params Func<bool>[] conditions) {
+    public Action<T> AddAnyEventTransition<T>(StateObject targetStateObject, Action<T> transitionAction, 
+        params Func<T, bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        EventTransition<T> transition = new EventTransition<T>(anyState, targetStateObject, transitionAction, conditions);
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2> AddAnyEventTransition<T1, T2>(StateObject targetStateObject, params Func<bool>[] conditions) {
+    public Action<T1, T2> AddAnyEventTransition<T1, T2>(StateObject targetStateObject, params Func<T1, T2, bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+        EventTransition<T1, T2> transition = new EventTransition<T1, T2>(anyState, targetStateObject, null, conditions);
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
     public Action<T1, T2> AddAnyEventTransition<T1, T2>(StateObject targetStateObject, 
-        Action transitionAction, params Func<bool>[] conditions) {
+        Action<T1, T2> transitionAction, params Func<T1, T2, bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        EventTransition<T1, T2> transition = new EventTransition<T1, T2>(anyState, targetStateObject, transitionAction, conditions);
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
-    public Action<T1, T2, T3> AddAnyEventTransition<T1, T2, T3>(StateObject targetStateObject, params Func<bool>[] conditions) {
+    public Action<T1, T2, T3> AddAnyEventTransition<T1, T2, T3>(StateObject targetStateObject, params Func<T1, T2, T3, bool>[] conditions) {
         
-        EventTransition transition = new EventTransition(anyState, targetStateObject, null, conditions);
+        EventTransition<T1, T2, T3> transition = new EventTransition<T1, T2, T3>(anyState, targetStateObject, null, conditions);
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
     }
 
     public Action<T1, T2, T3> AddAnyEventTransition<T1, T2, T3>(StateObject targetStateObject, 
-        Action transitionAction, params Func<bool>[] conditions) {
+        Action<T1, T2, T3> transitionAction, params Func<T1, T2, T3, bool>[] conditions) {
 
-        EventTransition transition = new EventTransition(anyState, targetStateObject, transitionAction, conditions);
+        EventTransition<T1, T2, T3> transition = new EventTransition<T1, T2, T3>(anyState, targetStateObject, transitionAction, conditions);
         TryRegisterAnyTransition(transition);
         anyEventTransitions.Add(transition);
         return transition.ListenEvent;
@@ -179,23 +179,22 @@ namespace HFSM {
         foreach(EventTransition anyEventTransition in anyEventTransitions) {
             anyEventTransition.ConsumeEvent();
         }
-        CurrentStateObject.ConsumeTransitionsEvents();
 
         if (availableTransition != null) {
-            ChangeState(availableTransition.OriginStateObject,
-                        availableTransition.TargetStateObject, 
-                        availableTransition.TransitionAction);
+            ChangeState(availableTransition);
             changedState = true;
         }
+
+        CurrentStateObject.ConsumeTransitionsEvents();
         return changedState;
     }
 
     internal override sealed void ConsumeTransitionsEvents() {
-        foreach (EventTransition anyEventTransition in anyEventTransitions) {
+        foreach (EventTransitionBase anyEventTransition in anyEventTransitions) {
             anyEventTransition.ConsumeEvent();
         }
 
-        foreach (EventTransition eventTransition in eventTransitions) {
+        foreach (EventTransitionBase eventTransition in eventTransitions) {
             eventTransition.ConsumeEvent();
         }
 
@@ -229,8 +228,9 @@ namespace HFSM {
         return availableTransition;
     }
 
-    private void ChangeState(StateObject originStateObject, StateObject targetStateObject, 
-        Action transitionAction) {
+    private void ChangeState(Transition availableTransition) {
+        StateObject originStateObject = availableTransition.OriginStateObject;
+        StateObject targetStateObject = availableTransition.TargetStateObject;
 
         StateMachine stateMachine1 = originStateObject.StateMachine;
         StateMachine stateMachine2 = targetStateObject.StateMachine;
@@ -249,7 +249,7 @@ namespace HFSM {
             currentStateMachine = parentStateMachine;
         }
 
-        transitionAction?.Invoke();
+        availableTransition.InvokeTransitionAction();
         lowestCommonStateMachine.CurrentStateObject.Enter();
     }
 

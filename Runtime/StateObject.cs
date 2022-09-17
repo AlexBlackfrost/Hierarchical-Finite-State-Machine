@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace HFSM {
 
-    public abstract partial class StateObject {
+    public abstract class StateObject {
         internal StateMachine StateMachine { get; set; }
         internal bool IsActive { get; private protected set; }
         private protected List<Transition> transitions;
-        private protected List<EventTransition> eventTransitions;
+        private protected List<EventTransitionBase> eventTransitions;
 
         public StateObject() {
             transitions = new List<Transition>();
-            eventTransitions = new List< EventTransition>();
+            eventTransitions = new List<EventTransitionBase>();
             IsActive = false;
         }
 
@@ -37,97 +37,64 @@ namespace HFSM {
 
         #region Add Event Transition Methods
         public Action AddEventTransition(StateObject destinationStateObject, params Func<bool>[] conditions) {
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, null, conditions);
+            EventTransition transition = new EventTransition(this, destinationStateObject, null, conditions);
+            TryRegisterEventTransition(transition);
             return transition.ListenEvent;
         }
         public Action AddEventTransition(StateObject destinationStateObject, 
             Action transitionAction, params Func<bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction, conditions);
+            EventTransition transition = new EventTransition(this, destinationStateObject, transitionAction, conditions);
+            TryRegisterEventTransition(transition);
             return transition.ListenEvent;
         }
 
         public Action<T> AddEventTransition<T>(StateObject destinationStateObject, params Func<T, bool>[] conditions){
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, null);
-            return EventListenerWrapper(transition, conditions);
+            EventTransition<T> transition = new EventTransition<T>(this, destinationStateObject, null, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
 
         public Action<T> AddEventTransition<T>(StateObject destinationStateObject, 
-            Action transitionAction, params Func<T, bool>[] conditions) {
+            Action<T> transitionAction, params Func<T, bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction);
-            return EventListenerWrapper(transition, conditions);
-        }
-
-        private Action<T> EventListenerWrapper<T>(EventTransition eventTransition, params Func<T, bool>[] conditions) {
-            return (T arg) => {
-                foreach (Func<T, bool> condition in conditions) {
-                    if (!condition(arg)) {
-                        return;
-                    }
-                }
-                eventTransition.ListenEvent();
-            };
+            EventTransition<T> transition = new EventTransition<T>(this, destinationStateObject, transitionAction, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
 
         public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject,
             params Func<T1, T2, bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, null);
-            return EventListenerWrapper(transition, conditions);
+            EventTransition<T1, T2> transition = new EventTransition<T1, T2>(this, destinationStateObject, null, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
 
         public Action<T1, T2> AddEventTransition<T1, T2>(StateObject destinationStateObject, 
-            Action transitionAction, params Func<T1, T2, bool>[] conditions) {
+            Action<T1, T2> transitionAction, params Func<T1, T2, bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction);
-            return EventListenerWrapper(transition, conditions);
-        }
-
-        private Action<T1, T2> EventListenerWrapper<T1, T2>(EventTransition eventTransition, 
-            params Func<T1, T2, bool>[] conditions) {
-
-            return (T1 arg1, T2 arg2) => {
-                foreach (Func<T1, T2, bool> condition in conditions) {
-                    if (!condition(arg1, arg2)) {
-                        return;
-                    }
-                }
-                eventTransition.ListenEvent();
-            };
+            EventTransition<T1, T2> transition = new EventTransition<T1, T2>(this, destinationStateObject, transitionAction, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
 
         public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, 
             params Func<T1, T2, T3, bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, null);
-            return EventListenerWrapper(transition, conditions);
+            EventTransition<T1, T2, T3> transition = new EventTransition<T1, T2, T3>(this, destinationStateObject, null, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
 
         public Action<T1, T2, T3> AddEventTransition<T1, T2, T3>(StateObject destinationStateObject, 
-            Action transitionAction, params Func<T1, T2, T3, bool>[] conditions) {
+            Action<T1, T2, T3> transitionAction, params Func<T1, T2, T3, bool>[] conditions) {
 
-            EventTransition transition = TryRegisterEventTransition(destinationStateObject, transitionAction);
-            return EventListenerWrapper(transition, conditions);
+            EventTransition<T1, T2, T3> transition = new EventTransition<T1, T2, T3>(this, destinationStateObject, transitionAction, conditions);
+            TryRegisterEventTransition(transition);
+            return transition.ListenEvent;
         }
-
-        private Action<T1, T2, T3> EventListenerWrapper<T1, T2, T3>(EventTransition eventTransition, 
-            params Func<T1, T2, T3, bool>[] conditions) {
-
-            return (T1 arg1, T2 arg2, T3 arg3) => {
-                foreach (Func<T1, T2, T3, bool> condition in conditions) {
-                    if (!condition(arg1, arg2, arg3)) {
-                        return;
-                    }
-                }
-                eventTransition.ListenEvent();
-            };
-        }
-
-    
         #endregion
-
-    
 
         private protected void TryRegisterTransition(Transition transition) {
             if(!HaveCommonStateMachineAncestor(transition.OriginStateObject, transition.TargetStateObject)) {
@@ -141,14 +108,10 @@ namespace HFSM {
             transitions.Add(transition);
         }
 
-        private EventTransition TryRegisterEventTransition(StateObject destinationStateObject,
-            Action transitionAction, params Func<bool>[] conditions) {
-
-            EventTransition transition = new EventTransition(this, destinationStateObject, transitionAction, conditions);
-            TryRegisterTransition(transition);
-            eventTransitions.Add(transition);
-            return transition;
-        }
+        private void TryRegisterEventTransition(EventTransitionBase eventTransition) {
+            TryRegisterTransition(eventTransition);
+            eventTransitions.Add(eventTransition);
+        } 
 
         private protected bool HaveCommonStateMachineAncestor(StateObject stateObject1, StateObject stateObject2) {
             bool haveCommonStateMachineAncestor = false;

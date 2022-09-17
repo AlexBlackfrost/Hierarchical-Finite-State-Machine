@@ -10,7 +10,7 @@ namespace HFSM {
     public State() : base() { }
 
     internal sealed override void ConsumeTransitionsEvents() {
-        foreach (EventTransition eventTransition in eventTransitions) {
+        foreach (EventTransitionBase eventTransition in eventTransitions) {
             eventTransition.ConsumeEvent();
         }
     }
