@@ -12,20 +12,20 @@ public class WriterStateMachineTwo : StateMachine {
     }
 
     protected override void OnUpdate() {
-        stringBuilder.Append(GetType() + HFSMTest.Update);
+        stringBuilder.Append(GetType() + HFSMTest.UpdateLogText);
     }
     protected override void OnFixedUpdate() {
-        stringBuilder.Append(GetType() + HFSMTest.FixedUpdate);
+        stringBuilder.Append(GetType() + HFSMTest.FixedUpdateLogText);
     }
     protected override void OnLateUpdate() {
-        stringBuilder.Append(GetType() + HFSMTest.LateUpdate);
+        stringBuilder.Append(GetType() + HFSMTest.LateUpdateLogText);
     }
     protected override void OnEnter() {
-        stringBuilder.Append(GetType() + HFSMTest.Enter);
+        stringBuilder.Append(GetType() + HFSMTest.EnterLogText);
     }
 
     protected override void OnExit() {
-        stringBuilder.Append(GetType() + HFSMTest.Exit);
+        stringBuilder.Append(GetType() + HFSMTest.ExitLogText);
     }
 }
 

@@ -12,20 +12,20 @@ public class WriterStateA : State {
     }
 
     protected override void OnUpdate() {
-        stringBuilder.Append(GetType() + " Update");
+        stringBuilder.Append(GetType() + HFSMTest.UpdateLogText);
     }
     protected override void OnFixedUpdate() {
-        stringBuilder.Append(GetType() + " FixedUpdate");
+        stringBuilder.Append(GetType() + HFSMTest.FixedUpdateLogText);
     }
     protected override void OnLateUpdate() {
-        stringBuilder.Append(GetType() + " LateUpdate");
+        stringBuilder.Append(GetType() + HFSMTest.LateUpdateLogText);
     }
     protected override void OnEnter() {
-        stringBuilder.Append(GetType() + " Enter");
+        stringBuilder.Append(GetType() + HFSMTest.EnterLogText);
     }
 
     protected override void OnExit() {
-        stringBuilder.Append(GetType() + " Exit");
+        stringBuilder.Append(GetType() + HFSMTest.ExitLogText);
     }
 }
 

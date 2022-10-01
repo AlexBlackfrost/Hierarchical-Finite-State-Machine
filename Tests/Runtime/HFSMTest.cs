@@ -9,12 +9,12 @@ using UnityEngine.TestTools;
 
 public class HFSMTest {
     // A Test behaves as an ordinary method
-    internal static string Enter = " Enter";
-    internal static string Exit = " Exit";
-    internal static string Update = " Update";
-    internal static string FixedUpdate = " FixedUpdate";
-    internal static string LateUpdate = " LateUpdate";
-    internal static string transitionText = "TransitionAction";
+    internal static string EnterLogText = " Enter. ";
+    internal static string ExitLogText = " Exit. ";
+    internal static string UpdateLogText = " Update. ";
+    internal static string FixedUpdateLogText = " FixedUpdate. ";
+    internal static string LateUpdateLogText = " LateUpdate. ";
+    internal static string TransitionLogText = "TransitionAction";
 
     [Test]
     public void StateName() {
@@ -256,16 +256,16 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                          stateMachineOne.GetType() + Enter +
-                          stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                          stateMachineOne.GetType() + EnterLogText +
+                          stateA.GetType() + EnterLogText +
 
-                          stateA.GetType() + Exit +
-                          stateB.GetType() + Enter +
+                          stateA.GetType() + ExitLogText +
+                          stateB.GetType() + EnterLogText +
 
-                          stateMachineZero.GetType() + Update +
-                          stateMachineOne.GetType() + Update +
-                          stateB.GetType() + Update;
+                          stateMachineZero.GetType() + UpdateLogText +
+                          stateMachineOne.GetType() + UpdateLogText +
+                          stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -362,11 +362,11 @@ public class HFSMTest {
         StateMachine zeroStateMachine = new WriterStateMachineZero(stringBuilder, stateMachineOne);
 
         zeroStateMachine.Init();
-        string expected = zeroStateMachine.GetType() + Enter +
-                          stateMachineOne.GetType() + Enter +
-                          stateMachineTwo.GetType() + Enter +
-                          stateMachineThree.GetType() + Enter +
-                          stateA.GetType() + Enter;
+        string expected = zeroStateMachine.GetType() + EnterLogText +
+                          stateMachineOne.GetType() + EnterLogText +
+                          stateMachineTwo.GetType() + EnterLogText +
+                          stateMachineThree.GetType() + EnterLogText +
+                          stateA.GetType() + EnterLogText;
         Assert.AreEqual(expected, stringBuilder.ToString());
     }
 
@@ -390,15 +390,15 @@ public class HFSMTest {
         transitionAB = true;
         zeroStateMachine.Update();
 
-        string expected = zeroStateMachine.GetType() + Enter +
-                          stateMachineOne.GetType() + Enter +
-                          stateMachineTwo.GetType() + Enter +
-                          stateA.GetType() + Enter +
-                          stateA.GetType() + Exit +
-                          stateMachineTwo.GetType() + Exit +
-                          stateMachineOne.GetType() + Exit +
-                          stateMachineThree.GetType() + Enter +
-                          stateB.GetType() + Enter;
+        string expected = zeroStateMachine.GetType() + EnterLogText +
+                          stateMachineOne.GetType() + EnterLogText +
+                          stateMachineTwo.GetType() + EnterLogText +
+                          stateA.GetType() + EnterLogText +
+                          stateA.GetType() + ExitLogText +
+                          stateMachineTwo.GetType() + ExitLogText +
+                          stateMachineOne.GetType() + ExitLogText +
+                          stateMachineThree.GetType() + EnterLogText +
+                          stateB.GetType() + EnterLogText;
         Assert.AreEqual(expected, stringBuilder.ToString());
     }
 
@@ -551,30 +551,30 @@ public class HFSMTest {
         zeroStateMachine.FixedUpdate();
         zeroStateMachine.Update();
 
-        string expected = zeroStateMachine.GetType() + Enter +
-                          stateMachineOne.GetType() + Enter +
-                          stateA.GetType() + Enter +
-                          zeroStateMachine.GetType() + FixedUpdate +
-                          stateMachineOne.GetType() + FixedUpdate +
-                          stateA.GetType() + FixedUpdate +
-                          zeroStateMachine.GetType() + Update +
-                          stateMachineOne.GetType() + Update +
-                          stateA.GetType() + Update +
+        string expected = zeroStateMachine.GetType() + EnterLogText +
+                          stateMachineOne.GetType() + EnterLogText +
+                          stateA.GetType() + EnterLogText +
+                          zeroStateMachine.GetType() + FixedUpdateLogText +
+                          stateMachineOne.GetType() + FixedUpdateLogText +
+                          stateA.GetType() + FixedUpdateLogText +
+                          zeroStateMachine.GetType() + UpdateLogText +
+                          stateMachineOne.GetType() + UpdateLogText +
+                          stateA.GetType() + UpdateLogText +
 
-                          zeroStateMachine.GetType() + FixedUpdate +
-                          stateMachineOne.GetType() + FixedUpdate +
-                          stateA.GetType() + FixedUpdate +
-                          stateA.GetType() + Exit +
-                          stateMachineOne.GetType() + Exit +
-                          stateMachineTwo.GetType() + Enter +
-                          stateB.GetType() + Enter +
+                          zeroStateMachine.GetType() + FixedUpdateLogText +
+                          stateMachineOne.GetType() + FixedUpdateLogText +
+                          stateA.GetType() + FixedUpdateLogText +
+                          stateA.GetType() + ExitLogText +
+                          stateMachineOne.GetType() + ExitLogText +
+                          stateMachineTwo.GetType() + EnterLogText +
+                          stateB.GetType() + EnterLogText +
 
-                          zeroStateMachine.GetType() + FixedUpdate +
-                          stateMachineTwo.GetType() + FixedUpdate +
-                          stateB.GetType() + FixedUpdate +
-                          zeroStateMachine.GetType() + Update +
-                          stateMachineTwo.GetType() + Update +
-                          stateB.GetType() + Update;
+                          zeroStateMachine.GetType() + FixedUpdateLogText +
+                          stateMachineTwo.GetType() + FixedUpdateLogText +
+                          stateB.GetType() + FixedUpdateLogText +
+                          zeroStateMachine.GetType() + UpdateLogText +
+                          stateMachineTwo.GetType() + UpdateLogText +
+                          stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -607,30 +607,30 @@ public class HFSMTest {
         zeroStateMachine.Update();
         zeroStateMachine.LateUpdate();
 
-        string expected = zeroStateMachine.GetType() + Enter +
-                          stateMachineOne.GetType() + Enter +
-                          stateA.GetType() + Enter +
-                          zeroStateMachine.GetType() + Update +
-                          stateMachineOne.GetType() + Update +
-                          stateA.GetType() + Update +
-                          zeroStateMachine.GetType() + LateUpdate +
-                          stateMachineOne.GetType() + LateUpdate +
-                          stateA.GetType() + LateUpdate +
+        string expected = zeroStateMachine.GetType() + EnterLogText +
+                          stateMachineOne.GetType() + EnterLogText +
+                          stateA.GetType() + EnterLogText +
+                          zeroStateMachine.GetType() + UpdateLogText +
+                          stateMachineOne.GetType() + UpdateLogText +
+                          stateA.GetType() + UpdateLogText +
+                          zeroStateMachine.GetType() + LateUpdateLogText +
+                          stateMachineOne.GetType() + LateUpdateLogText +
+                          stateA.GetType() + LateUpdateLogText +
 
-                          stateA.GetType() + Exit +
-                          stateMachineOne.GetType() + Exit +
-                          stateMachineTwo.GetType() + Enter +
-                          stateB.GetType() + Enter +
-                          zeroStateMachine.GetType() + LateUpdate +
-                          stateMachineTwo.GetType() + LateUpdate +
-                          stateB.GetType() + LateUpdate +
+                          stateA.GetType() + ExitLogText +
+                          stateMachineOne.GetType() + ExitLogText +
+                          stateMachineTwo.GetType() + EnterLogText +
+                          stateB.GetType() + EnterLogText +
+                          zeroStateMachine.GetType() + LateUpdateLogText +
+                          stateMachineTwo.GetType() + LateUpdateLogText +
+                          stateB.GetType() + LateUpdateLogText +
 
-                          zeroStateMachine.GetType() + Update +
-                          stateMachineTwo.GetType() + Update +
-                          stateB.GetType() + Update +
-                          zeroStateMachine.GetType() + LateUpdate +
-                          stateMachineTwo.GetType() + LateUpdate +
-                          stateB.GetType() + LateUpdate;
+                          zeroStateMachine.GetType() + UpdateLogText +
+                          stateMachineTwo.GetType() + UpdateLogText +
+                          stateB.GetType() + UpdateLogText +
+                          zeroStateMachine.GetType() + LateUpdateLogText +
+                          stateMachineTwo.GetType() + LateUpdateLogText +
+                          stateB.GetType() + LateUpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -645,7 +645,7 @@ public class HFSMTest {
         StringBuilder sb = new StringBuilder();
         State stateA = new WriterStateA(sb);
         stateA.Update();
-        Assert.AreEqual(stateA.GetType() + Update, sb.ToString());
+        Assert.AreEqual(stateA.GetType() + UpdateLogText, sb.ToString());
     }
 
     [Test]
@@ -661,24 +661,24 @@ public class HFSMTest {
         StateMachine zeroStateMachine = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
         
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateA.AddTransition(stateB, transitionAction);
 
         zeroStateMachine.Init();
         zeroStateMachine.Update();
         zeroStateMachine.Update();
 
-        string expected = zeroStateMachine.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() +  Enter +
-                         stateB.GetType() + Enter +
-                         zeroStateMachine.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+        string expected = zeroStateMachine.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() +  EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         zeroStateMachine.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -696,7 +696,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         Action transitionEvent = null;
         transitionEvent += stateA.AddEventTransition(stateB, transitionAction);
 
@@ -706,22 +706,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update + 
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText + 
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -747,21 +747,21 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -779,7 +779,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action<int> transitionAction = (int arg) => { sb.Append(transitionText); };
+        Action<int> transitionAction = (int arg) => { sb.Append(TransitionLogText); };
         Action<int> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int>(stateB, transitionAction);
 
@@ -789,22 +789,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -830,21 +830,21 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -862,7 +862,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(transitionText); };
+        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(TransitionLogText); };
         Action<int, string> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int, string>(stateB, transitionAction);
 
@@ -872,22 +872,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -913,21 +913,21 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -945,7 +945,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
 
-        Action<int, string, int> transitionAction = (int arg1, string arg2, int arg3) => { sb.Append(transitionText); };
+        Action<int, string, int> transitionAction = (int arg1, string arg2, int arg3) => { sb.Append(TransitionLogText); };
         Action<int, string, int> transitionEvent = null;
         transitionEvent += stateA.AddEventTransition<int, string, int>(stateB, transitionAction);
 
@@ -955,22 +955,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -985,7 +985,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateMachineOne.AddTransition(stateMachineOne, transitionAction, ()=> { return transitionCondition; });
 
         stateMachineZero.Init();
@@ -995,23 +995,23 @@ public class HFSMTest {
         transitionCondition = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString(), expected + "\n" + sb.ToString());
     }
@@ -1026,7 +1026,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateMachineOne.AddTransition(stateA, transitionAction, () => { return transitionCondition; });
 
         stateMachineZero.Init();
@@ -1036,23 +1036,23 @@ public class HFSMTest {
         transitionCondition = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString(), expected + "\n" + sb.ToString());
     }
@@ -1067,7 +1067,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateA.AddTransition(stateA, transitionAction, () => { return transitionCondition; });
 
         stateMachineZero.Init();
@@ -1077,21 +1077,21 @@ public class HFSMTest {
         transitionCondition = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         transitionText +
-                         stateA.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1106,7 +1106,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateA.AddTransition(stateMachineOne, transitionAction, () => { return transitionCondition; });
 
         stateMachineZero.Init();
@@ -1116,23 +1116,23 @@ public class HFSMTest {
         transitionCondition = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1147,7 +1147,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateA.AddTransition(stateMachineOne, transitionAction, () => { return transitionCondition; });
 
         stateMachineZero.Init();
@@ -1157,28 +1157,28 @@ public class HFSMTest {
         transitionCondition = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateMachineTwo.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineTwo.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineOne.GetType() + Enter +
-                         stateMachineTwo.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1208,28 +1208,28 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateB.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateB.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateB.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineTwo.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineOne.GetType() + Enter +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1255,24 +1255,24 @@ public class HFSMTest {
         transitionConditionOneA = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateB.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText +
 
-                         stateB.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineOne.GetType() + Enter +
-                         stateMachineTwo.GetType() + Enter +
-                         stateA.GetType() + Enter +
+                         stateB.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateA.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1290,7 +1290,7 @@ public class HFSMTest {
         StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
 
         bool transitionCondition = false;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         stateMachineOne.AddAnyTransition(stateB, transitionAction, () => { return transitionCondition; });
 
 
@@ -1300,23 +1300,23 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         transitionText +
-                         stateMachineTwo.GetType() + Enter +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1347,22 +1347,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateC.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateC.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1395,24 +1395,24 @@ public class HFSMTest {
         transitionConditionCD = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateMachineThree.GetType() + Enter +
-                         stateC.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateMachineThree.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateMachineThree.GetType() + Update +
-                         stateC.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateMachineThree.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1446,22 +1446,22 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateC.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateC.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1511,20 +1511,20 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1541,7 +1541,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action transitionEvent = null;
-        Action transitionAction = () => { sb.Append(transitionText); };
+        Action transitionAction = () => { sb.Append(TransitionLogText); };
         transitionEvent += stateMachineOne.AddAnyEventTransition(stateB, transitionAction, () => { return transitionConditionAB; });
 
 
@@ -1553,21 +1553,21 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         transitionText +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1596,20 +1596,20 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1626,7 +1626,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int> transitionEvent = null;
-        Action<int> transitionAction = (int arg) => { sb.Append(transitionText); };
+        Action<int> transitionAction = (int arg) => { sb.Append(TransitionLogText); };
         transitionEvent += stateMachineOne.AddAnyEventTransition<int>(stateB, transitionAction, (int arg1) => { return transitionConditionAB; });
 
 
@@ -1638,21 +1638,21 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         transitionText +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1680,20 +1680,20 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1710,7 +1710,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string> transitionEvent = null;
-        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(transitionText); };
+        Action<int, string> transitionAction = (int arg1, string arg2) => { sb.Append(TransitionLogText); };
         Func<int, string, bool> transitionCondition = (int arg1, string arg2) => { return transitionConditionAB; };
         transitionEvent += stateMachineOne.AddAnyEventTransition<int, string>(stateB, transitionAction, transitionCondition);
 
@@ -1723,21 +1723,21 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         transitionText +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1766,20 +1766,20 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1796,7 +1796,7 @@ public class HFSMTest {
 
         bool transitionConditionAB = false;
         Action<int, string, bool> transitionEvent = null;
-        Action<int, string, bool> transitionAction = (int arg1, string arg2, bool arg3) => { sb.Append(transitionText); };
+        Action<int, string, bool> transitionAction = (int arg1, string arg2, bool arg3) => { sb.Append(TransitionLogText); };
         Func<int, string, bool, bool> transitionCondition = (int arg1, string arg2, bool arg3) => { return transitionConditionAB; };
         transitionEvent += stateMachineOne.AddAnyEventTransition<int, string, bool>(stateB, transitionAction, transitionCondition );
 
@@ -1809,21 +1809,21 @@ public class HFSMTest {
         transitionConditionAB = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         transitionText +
-                         stateB.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         TransitionLogText +
+                         stateB.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateB.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1853,22 +1853,22 @@ public class HFSMTest {
         transitionConditionC = false;
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateC.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateC.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
     }
@@ -1902,24 +1902,183 @@ public class HFSMTest {
         stateMachineZero.Update();
         stateMachineZero.Update();
 
-        string expected = stateMachineZero.GetType() + Enter +
-                         stateMachineOne.GetType() + Enter +
-                         stateA.GetType() + Enter +
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineOne.GetType() + Update +
-                         stateA.GetType() + Update +
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
 
-                         stateA.GetType() + Exit +
-                         stateMachineOne.GetType() + Exit +
-                         stateMachineTwo.GetType() + Enter +
-                         stateC.GetType() + Enter +
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
 
-                         stateMachineZero.GetType() + Update +
-                         stateMachineTwo.GetType() + Update +
-                         stateC.GetType() + Update;
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString());
         Assert.AreEqual(50, number[0]); 
+    }
+
+    [Test]
+    public void MultipleEventsFiredBeforeProcessing() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+
+        Action<int[]> transitionEvent = null;
+        int[] number = { 48 };
+        Action<int[]> transitionAction = (int[] number) => {
+            number[0]++;
+        };
+        Func<int[], bool> transitionConditionAC = (int[] numberArg) => { return numberArg[0] == 49; };
+        Func<int[], bool> transitionConditionCA = (int[] numberArg) => { return numberArg[0] == 50; };
+        transitionEvent += stateA.AddEventTransition<int[]>(stateC, transitionAction, transitionConditionAC);
+        transitionEvent += stateC.AddEventTransition<int[]>(stateA, transitionAction, transitionConditionCA);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        number[0] = 49;
+        transitionEvent.Invoke(number);
+        transitionEvent.Invoke(number);
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+        number[0] = 50;
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateC.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void MultipleEventsWithDifferentArgsFiredBeforeProcessing() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+
+        int[] number = { 48 };
+        Action<int[]> transitionEvent = null;
+        Action<int[]> transitionAction = (int[] number) => {
+            number[0]++;
+        };
+        Func<int[], bool> transitionConditionAC = (int[] numberArg) => { return numberArg[0] == 49; };
+        Func<int[], bool> transitionConditionCA = (int[] numberArg) => { return numberArg[0] == 50; };
+        transitionEvent += stateA.AddEventTransition<int[]>(stateC, transitionAction, transitionConditionAC);
+        transitionEvent += stateC.AddEventTransition<int[]>(stateA, transitionAction, transitionConditionCA);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        number[0] = 47;
+        transitionEvent.Invoke(number);
+        number[0] = 46;
+        transitionEvent.Invoke(number);
+        number[0] = 49;
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString()); 
+    }
+
+    [Test]
+    public void ProcessIntantlyTransitionEvent() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+
+        int[] number = { 48 };
+        Action<int[]> transitionEvent = null;
+        Func<int[], bool> transitionConditionAC = (int[] numberArg) => { return numberArg[0] == 49; };
+        transitionEvent += stateA.AddEventTransition<int[]>(stateC, true, transitionConditionAC);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        number[0] = 49;
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
     }
 }
