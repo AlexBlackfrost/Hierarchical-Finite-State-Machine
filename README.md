@@ -31,7 +31,7 @@ public class IdleState : State {
 	<img src="Documentation~/ExampleStateMachine.png" height="200" />
 </div>
 
-```
+```cs
 State idleState = new IdleState();
 State walkState = new WalkState();
 State attackState = new AttackState();
