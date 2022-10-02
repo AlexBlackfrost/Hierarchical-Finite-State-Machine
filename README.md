@@ -8,7 +8,12 @@
 	</a>
 	<img alt="GitHub package.json version (branch)" src="https://img.shields.io/github/package-json/v/alexblackfrost/unity-hierarchical-finite-state-machine/main">
 </div>	
+
 Hierarchical Finite State Machine Unity implementation.
+## How to install
+1. Open Unity and click ```Window```>```Package Manager```.
+2. Click on ```+``` button and select ```Add package from git URL```.
+3. Paste ```https://github.com/AlexBlackfrost/Unity-Hierarchical-Finite-State-Machine.git``` and click ```Add```.
 
 ## Features
 ### Class based architecture
