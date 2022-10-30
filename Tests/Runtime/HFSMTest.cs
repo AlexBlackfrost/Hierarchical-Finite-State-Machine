@@ -2081,4 +2081,36 @@ public class HFSMTest {
                          stateMachineTwo.GetType() + UpdateLogText +
                          stateC.GetType() + UpdateLogText;
     }
+    [Test]
+    public void AnyTransitionEventCast() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+        StateMachineZero stateMachineZero = new StateMachineZero(stateA, stateB, stateC);
+
+        int[] number = { 48 };
+        Action<int[]> transitionEvent = null;
+        transitionEvent += stateMachineZero.AddAnyEventTransition<int[]>(stateC);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        number[0] = 49;
+        transitionEvent.Invoke(number);
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+    }
 }
