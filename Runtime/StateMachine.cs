@@ -414,7 +414,7 @@ namespace HFSM {
                 availableTransition = CurrentStateObject.GetAvailableTransition();
             }
 
-            foreach (EventTransition anyEventTransition in anyEventTransitions) {
+            foreach (EventTransitionBase anyEventTransition in anyEventTransitions) {
                 anyEventTransition.ConsumeEvent();
             }
 
