@@ -39,6 +39,7 @@ namespace HFSM {
         private List<EventTransitionBase> anyEventTransitions;
         private bool initialized;
         private State anyState;
+        private bool changedState;
 
         /// <summary>
         /// Class constructor. Creates a <see cref="StateMachine"/> and initializes it. Throws
@@ -63,6 +64,7 @@ namespace HFSM {
             anyState = new State.Any();
             anyState.StateMachine = this;
             initialized = false;
+            changedState = false;
 
             DefaultStateObject = stateObjects[0];
             foreach (StateObject stateObject in stateObjects) {
@@ -417,13 +419,15 @@ namespace HFSM {
             foreach (EventTransitionBase anyEventTransition in anyEventTransitions) {
                 anyEventTransition.ConsumeEvent();
             }
-
+            ConsumeTransitionsEvents();
+            
             if (availableTransition != null) {
                 ChangeState(availableTransition);
                 changedState = true;
             }
+            //CurrentStateObject.ConsumeTransitionsEvents();
+            //previousStateObject.ConsumeTransitionsEvents(); 
 
-            CurrentStateObject.ConsumeTransitionsEvents();
             return changedState;
         }
 
@@ -537,7 +541,7 @@ namespace HFSM {
         /// </summary>
         public sealed override void Update() {
             CheckInitialization();
-            bool changedState = TryChangeState();
+            changedState = TryChangeState();
             if (!changedState) {
                 OnUpdate();
                 CurrentStateObject.UpdateInternal();
@@ -571,8 +575,10 @@ namespace HFSM {
         /// </summary>
         public sealed override void LateUpdate() {
             CheckInitialization();
-            OnLateUpdate();
-            CurrentStateObject.LateUpdate();
+            if (!changedState) {
+                OnLateUpdate();
+                CurrentStateObject.LateUpdate();
+            }
         }
 
         /// <summary>
