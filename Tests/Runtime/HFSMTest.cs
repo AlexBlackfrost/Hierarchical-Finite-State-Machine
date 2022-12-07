@@ -621,9 +621,6 @@ public class HFSMTest {
                           stateMachineOne.GetType() + ExitLogText +
                           stateMachineTwo.GetType() + EnterLogText +
                           stateB.GetType() + EnterLogText +
-                          zeroStateMachine.GetType() + LateUpdateLogText +
-                          stateMachineTwo.GetType() + LateUpdateLogText +
-                          stateB.GetType() + LateUpdateLogText +
 
                           zeroStateMachine.GetType() + UpdateLogText +
                           stateMachineTwo.GetType() + UpdateLogText +
@@ -2040,7 +2037,7 @@ public class HFSMTest {
     }
 
     [Test]
-    public void ProcessIntantlyTransitionEvent() {
+    public void ProcessIntantlyTransitionEvent2Args() {
         StringBuilder sb = new StringBuilder();
 
         State stateA = new WriterStateA(sb);
@@ -2080,7 +2077,55 @@ public class HFSMTest {
                          stateMachineZero.GetType() + UpdateLogText +
                          stateMachineTwo.GetType() + UpdateLogText +
                          stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
     }
+
+    public void ProcessIntantlyTransitionEventNoArgs() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+
+        bool canTransition = false;
+        Action transitionEvent = null;
+        Func<bool> transitionConditionAC = () => { return canTransition; };
+        transitionEvent += stateA.AddEventTransition(stateC, true, transitionConditionAC);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        canTransition = true;
+        transitionEvent.Invoke();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+
     [Test]
     public void AnyTransitionEventCast() {
         StringBuilder sb = new StringBuilder();
@@ -2088,7 +2133,7 @@ public class HFSMTest {
         State stateA = new WriterStateA(sb);
         State stateB = new WriterStateB(sb);
         State stateC = new WriterStateC(sb);
-        StateMachineZero stateMachineZero = new StateMachineZero(stateA, stateB, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateA, stateB, stateC);
 
         int[] number = { 48 };
         Action<int[]> transitionEvent = null;
@@ -2099,6 +2144,7 @@ public class HFSMTest {
         stateMachineZero.Update();
         number[0] = 49;
         transitionEvent.Invoke(number);
+        stateMachineZero.Update();
         stateMachineZero.Update();
 
         string expected = stateMachineZero.GetType() + EnterLogText +
@@ -2112,5 +2158,46 @@ public class HFSMTest {
 
                          stateMachineZero.GetType() + UpdateLogText +
                          stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void LateUpdateNotCalledWhenStateChanges() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+        WriterStateMachineZero stateMachineZero = new WriterStateMachineZero(sb, stateA, stateB, stateC);
+        bool canTranstion = false;
+        stateA.AddTransition(stateB, ()=> { return canTranstion; });
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+        stateMachineZero.LateUpdate();
+        canTranstion = true;
+        stateMachineZero.Update();
+        stateMachineZero.LateUpdate();
+        stateMachineZero.Update();
+        stateMachineZero.LateUpdate();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+                         stateMachineZero.GetType() + LateUpdateLogText +
+                         stateA.GetType() + LateUpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateB.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateB.GetType() + UpdateLogText +
+                         stateMachineZero.GetType() + LateUpdateLogText +
+                         stateB.GetType() + LateUpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
     }
 }
