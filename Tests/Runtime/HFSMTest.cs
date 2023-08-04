@@ -1982,7 +1982,7 @@ public class HFSMTest {
     }
 
     [Test]
-    public void MultipleEventsWithDifferentArgsFiredBeforeProcessing() {
+    public void MultipleEventsWithDifferentArgsPassedByReferenceFiredBeforeProcessing() {
         StringBuilder sb = new StringBuilder();
 
         State stateA = new WriterStateA(sb);
@@ -2034,6 +2034,157 @@ public class HFSMTest {
                          stateC.GetType() + UpdateLogText;
 
         Assert.AreEqual(expected, sb.ToString()); 
+    }
+
+    [Test]
+    public void MultipleEventsWithOneDifferentArgsPassedByValueFiredBeforeProcessing() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        Action<int> transitionEvent = null;
+        Func<int, bool> transitionConditionAC = (int numberArg) => { return numberArg == 49; };
+        Func<int, bool> transitionConditionCA = (int numberArg) => { return numberArg == 50; };
+        transitionEvent += stateA.AddEventTransition<int>(stateC, transitionConditionAC);
+        transitionEvent += stateC.AddEventTransition<int>(stateA,  transitionConditionCA);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+
+        transitionEvent.Invoke(48);
+        transitionEvent.Invoke(49);
+        transitionEvent.Invoke(50);
+
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void MultipleEventsWithTwoDifferentArgsPassedByValueFiredBeforeProcessing() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        Action<int, int> transitionEvent = null;
+        Func<int, int, bool> transitionConditionAC = (int numberArg1, int numberArg2) => { return numberArg1 == 49 && numberArg2 == -49; };
+        Func<int, int, bool> transitionConditionCA = (int numberArg1, int numberArg2) => { return numberArg1 == 50 && numberArg2 == -50; };
+        transitionEvent += stateA.AddEventTransition<int, int>(stateC, transitionConditionAC);
+        transitionEvent += stateC.AddEventTransition<int, int>(stateA, transitionConditionCA);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+
+        transitionEvent.Invoke(48, -48);
+        transitionEvent.Invoke(49, -49);
+        transitionEvent.Invoke(50, -50);
+
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
+    }
+
+    [Test]
+    public void MultipleEventsWithThreeDifferentArgsPassedByValueFiredBeforeProcessing() {
+        StringBuilder sb = new StringBuilder();
+
+        State stateA = new WriterStateA(sb);
+        State stateB = new WriterStateB(sb);
+        State stateC = new WriterStateC(sb);
+
+        StateMachine stateMachineOne = new WriterStateMachineOne(sb, stateA, stateB);
+        StateMachine stateMachineTwo = new WriterStateMachineTwo(sb, stateC);
+        StateMachine stateMachineZero = new WriterStateMachineZero(sb, stateMachineOne, stateMachineTwo);
+
+        Action<int, int, string> transitionEvent = null;
+        Func<int, int, string, bool> transitionConditionAC = (int numberArg1, int numberArg2, string stringArg) => { 
+            return numberArg1 == 49 && numberArg2 == -49 && stringArg == "49"; 
+        };
+        Func<int, int, string, bool> transitionConditionCA = (int numberArg1, int numberArg2, string stringArg) => { 
+            return numberArg1 == 50 && numberArg2 == -50 && stringArg == "50"; 
+        };
+        transitionEvent += stateA.AddEventTransition<int, int, string>(stateC, transitionConditionAC);
+        transitionEvent += stateC.AddEventTransition<int, int, string>(stateA, transitionConditionCA);
+
+
+        stateMachineZero.Init();
+        stateMachineZero.Update();
+
+        transitionEvent.Invoke(48, -48, "48");
+        transitionEvent.Invoke(49, -49, "49");
+        transitionEvent.Invoke(50, -50, "50");
+
+        stateMachineZero.Update();
+        stateMachineZero.Update();
+
+        string expected = stateMachineZero.GetType() + EnterLogText +
+                         stateMachineOne.GetType() + EnterLogText +
+                         stateA.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineOne.GetType() + UpdateLogText +
+                         stateA.GetType() + UpdateLogText +
+
+                         stateA.GetType() + ExitLogText +
+                         stateMachineOne.GetType() + ExitLogText +
+                         stateMachineTwo.GetType() + EnterLogText +
+                         stateC.GetType() + EnterLogText +
+
+                         stateMachineZero.GetType() + UpdateLogText +
+                         stateMachineTwo.GetType() + UpdateLogText +
+                         stateC.GetType() + UpdateLogText;
+
+        Assert.AreEqual(expected, sb.ToString());
     }
 
     [Test]

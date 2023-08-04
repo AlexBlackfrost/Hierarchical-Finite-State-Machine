@@ -107,6 +107,7 @@ namespace HFSM {
             currentArg = default(T);
             foreach (T arg in args) {
                 currentArg = arg;
+                conditionsMet = true;
                 foreach (Func<T, bool> condition in conditions) {
                     if (!condition(arg)) {
                         conditionsMet = false;
@@ -169,6 +170,7 @@ namespace HFSM {
             currentArgs = default((T1, T2));
             foreach ((T1, T2) argTuple in args) {
                 currentArgs = argTuple;
+                conditionsMet = true;
                 foreach (Func<T1, T2, bool> condition in conditions) {
                     if (!condition(currentArgs.Item1, currentArgs.Item2)) {
                         conditionsMet = false;
@@ -232,6 +234,7 @@ namespace HFSM {
             currentArgs = default((T1, T2, T3));
             foreach ((T1, T2, T3) argTuple in args) {
                 currentArgs = argTuple;
+                conditionsMet = true;
                 foreach (Func<T1, T2, T3, bool> condition in conditions) {
                     if (!condition(argTuple.Item1, argTuple.Item2, argTuple.Item3)) {
                         conditionsMet = false;
