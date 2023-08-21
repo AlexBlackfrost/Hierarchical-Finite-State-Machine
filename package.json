@@ -1,6 +1,6 @@
 {
   "name": "com.blackfrost.hfsm",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "displayName": "Hierarchical Finite State Machine",
   "description": "Hierarchical finite state machine implementation",
   "documentationUrl": "",
